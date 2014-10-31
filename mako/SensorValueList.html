@@ -1,0 +1,20 @@
+<%include file="header.html"/>
+
+<div class="LineTable">
+<table>
+<tr>
+    <td width="60"> TimeStamp </td>
+    <td width="100"> Light </td>
+    <td width="100"> Temperature </td>
+</tr>
+
+%for r in Records :
+<tr>
+    <td> ${r.Ts} </td>
+    <td> ${r.Light} </td>
+    <td> ${r.Temperature} </td>
+</tr>
+%endfor
+</table>
+</div>
+<%include file="footer.html"/>
