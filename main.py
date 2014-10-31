@@ -4,7 +4,8 @@
 #   File Name: main.py
 #      Author: Zhao Yanbai
 #              Fri Oct 31 05:43:35 2014
-# Description: none
+# Description: 
+#       #nohup python main.py 36000 >/dev/null 2>&1 &
 # ------------------------------------------------------------------------
 
 import web

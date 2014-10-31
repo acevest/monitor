@@ -8,5 +8,6 @@
 # ------------------------------------------------------------------------
 
 urls = (
-    '/',                'core.SensorValue.SensorValueMgr'
+    '/',                    'Index',
+    '/SensorValueMgr',      'core.SensorValue.SensorValueMgr'
 )

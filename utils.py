@@ -233,15 +233,6 @@ class DBBase(object):
 
         return self.ret
 
-def GetLogicName(logic) :
-    LN = {
-        0 : 'BOTH',
-        1 : 'TALK',
-        2 : 'VoIP'
-    }
-
-    return LN.get(logic, '我擦, 这是什么逻辑:{0}'.format(logic))
-
 def GetSvrOutputLines(cmd) :
     lines = []
     o = commands.getoutput(cmd)
