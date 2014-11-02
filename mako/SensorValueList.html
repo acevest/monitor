@@ -1,87 +1,167 @@
 <%include file="header.html"/>
-
-<div style="width:80%">
-    <div><canvas id="LightChart"></canvas></div>
-    <div><canvas id="TemperatureChart"></canvas></div>
-</div>
-
-<%
-rs = Records[::-1]
-Labels = str(["{0}".format(r.Ts) for r in rs])
-Lights = str([r.Light for r in rs])
-Temperatures = str([r.Temperature for r in rs])
-%>
+  <div id="LightChart" style="min-width:700px;height:400px"></div>
+  <br>
+  <div id="TemperatureChart" style="min-width:700px;height:400px"></div>
+<script type="text/javascript" src="/static/highcharts/highcharts.js"></script>
+<script type="text/javascript" src="/static/highcharts/modules/exporting.js"></script>
 <script>
-    var LightChartData = {
-        labels : ${Labels},
-        datasets : [
-            {
-                label: "Light",
-                fillColor : "rgba(220,220,220,0.2)",
-                strokeColor : "rgba(220,220,220,1)",
-                pointColor : "rgba(220,220,220,1)",
-                pointStrokeColor : "#fff",
-                pointHighlightFill : "#fff",
-                pointHighlightStroke : "rgba(220,220,220,1)",
-                data : ${Lights}
-            },
-        ]
-
-    }
-
-
-    var TemperatureChartData = {
-        labels : ${Labels},
-        datasets : [
-            {
-                label: "Temperature",
-                fillColor : "rgba(151,187,205,0.2)",
-                strokeColor : "rgba(151,187,205,1)",
-                pointColor : "rgba(151,187,205,1)",
-                pointStrokeColor : "#fff",
-                pointHighlightFill : "#fff",
-                pointHighlightStroke : "rgba(151,187,205,1)",
-                data : ${Temperatures}
-            },
-        ]
-
-    }
-
-
-window.onload = function(){
-    var light_chart_ctx = document.getElementById("LightChart").getContext("2d");
-    window.myLine = new Chart(light_chart_ctx).Line(LightChartData, {
-        responsive: true
+$(function () {
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
     });
 
-    var temperature_chart_ctx = document.getElementById("TemperatureChart").getContext("2d");
-    window.myLine = new Chart(temperature_chart_ctx).Line(TemperatureChartData, {
-        responsive: true
+
+    var JsonData = []
+    $.ajax({
+        async: false,
+        data: { action: 'Json' },
+        dataType: 'json',
+        success: function(d) {
+                $.each(d, function(i) {
+                    r = d[i];
+                    r.datetime = new Date(r.Ts.replace(/-/g,'/'));
+                    JsonData.push(r)
+                });
+        },
+        error: function() { },
+        beforeSend: function() { }
     });
 
-}
+
+    $('#LightChart').highcharts({
+        chart: {
+            type: 'spline',
+            animation: Highcharts.svg, // don't animate in old IE
+            marginRight: 10,
+            events: {
+                load: function() {
+                }
+            }
+        },
+        title: {
+            text: 'Light'
+        },
+        xAxis: {
+            type: 'datetime',
+            tickPixelInterval: 150
+        },
+        yAxis: {
+            title: {
+                text: 'Value'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        tooltip: {
+            formatter: function() {
+                    return '<b>'+ this.series.name +'</b><br/>'+
+                    Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+
+                    Highcharts.numberFormat(this.y, 2);
+            }
+        },
+        plotOptions: {
+            spline : {
+                lineColor: 'black',
+                marker: {
+                    enabled:false
+                }
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        exporting: {
+            enabled: false
+        },
+        series: [{
+            name: 'Light',
+            data: (function() {
+                var data = []
+                $.each(JsonData, function(i) {
+                    r = JsonData[i];
+                    data.push({
+                        x: r.datetime,
+                        y: +r.Light
+                    });
+                });
+                return data;
+            })()
+        }]
+    });
 
 
+
+
+    $('#TemperatureChart').highcharts({
+        chart: {
+            type: 'spline',
+            animation: Highcharts.svg, // don't animate in old IE
+            borderWidthborderWidth:0,
+            marginRight: 10,
+            events: {
+                load: function() {
+                }
+            }
+        },
+        title: {
+            text: 'Temperature'
+        },
+        xAxis: {
+            type: 'datetime',
+            tickPixelInterval: 150
+        },
+        yAxis: {
+            title: {
+                text: '℃'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#000000'
+            }]
+        },
+        tooltip: {
+            formatter: function() {
+                    return '<b>'+ this.series.name +'</b><br/>'+
+                    Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+
+                    Highcharts.numberFormat(this.y, 2) + "<b> ℃</b>";
+            }
+        },
+        plotOptions: {
+            spline : {
+                lineColor: 'black',
+                marker: {
+                    enabled:false
+                }
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        exporting: {
+            enabled: false
+        },
+        series: [{
+            name: 'Temperature',
+            data: (function() {
+                var data = []
+                $.each(JsonData, function(i) {
+                    r = JsonData[i];
+                    data.push({
+                        x: r.datetime,
+                        y: +r.Temperature
+                    });
+                });
+                return data;
+            })()
+        }]
+    });
+
+});
 </script>
-
-
-%if False :
-    <div class="LineTable">
-    <table>
-    <tr>
-        <td width="160"> TimeStamp </td>
-        <td width="100"> Light </td>
-        <td width="100"> Temperature </td>
-    </tr>
-
-    %for r in Records :
-    <tr>
-        <td> ${r.Ts} </td>
-        <td> ${r.Light} </td>
-        <td> ${r.Temperature} </td>
-    </tr>
-    %endfor
-    </table>
-    </div>
-%endif
 <%include file="footer.html"/>

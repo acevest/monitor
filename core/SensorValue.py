@@ -19,7 +19,7 @@ class dbSensorValue(DBBase) :
     def __init__(self) :
         super(dbSensorValue, self).__init__(config.db)
 
-    def ReadData(self, cnt=1440):
+    def ReadData(self, cnt=288):
         sql = "SELECT * FROM SensorValue ORDER BY Ts DESC LIMIT {0};".format(cnt)
         return self.Read(sql)
 
@@ -28,7 +28,15 @@ db = dbSensorValue()
 class SensorValueMgr(PageBase):
     def __init__(self) :
         super(SensorValueMgr, self).__init__()
+        self.SetActionHandler('Json',    self.Json)
+
+    def Json(self) :
+        rs = db.ReadData()
+        rs = rs[::-1]
+        for r in rs :
+            r.Ts = str(r.Ts)
+        return json.dumps(rs, ensure_ascii=False)
+        
 
     def List(self) :
-        rs = db.ReadData()
-        return config.render.SensorValueList(Records = rs)
+        return config.render.SensorValueList()
