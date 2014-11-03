@@ -115,6 +115,12 @@ class PageBase(object):
         return json.dumps(self.Ret, ensure_ascii=False)
         return self.Ret
 
+    def SucJsonData(self, data) :
+        self.Ret['Err'] = 0
+        self.Ret['Msg'] = 'success'
+        self.Ret['Data'] = data
+        return json.dumps(self.Ret, ensure_ascii=False)
+
     def AuthorizedUser(self) :
         return True
 
@@ -250,5 +256,5 @@ def GetSvrOutputLines(cmd) :
     return lines
 
 
-def Ts2TmStr(ts) :
+def Ts2TmStr(ts=int(time.time())) :
     return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(ts))

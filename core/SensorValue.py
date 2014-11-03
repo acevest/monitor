@@ -13,6 +13,8 @@ import web
 import json
 import sys
 import config
+import commands
+import serial
 from utils import *
 
 class dbSensorValue(DBBase) :
@@ -23,12 +25,18 @@ class dbSensorValue(DBBase) :
         sql = "SELECT * FROM SensorValue ORDER BY Ts DESC LIMIT {0};".format(cnt)
         return self.Read(sql)
 
+    def ReadImmediatelyData(self) :
+        sql = "SELECT * FROM SensorImmediatelyValue LIMIT 1;"
+        return self.Read(sql)
+
 db = dbSensorValue()
 
 class SensorValueMgr(PageBase):
     def __init__(self) :
         super(SensorValueMgr, self).__init__()
         self.SetActionHandler('Json',    self.Json)
+        self.SetActionHandler('ImmediatelyList',    self.ImmediatelyList)
+        self.SetActionHandler('ImmediatelyJson',    self.ImmediatelyJson)
 
     def Json(self) :
         rs = db.ReadData()
@@ -40,3 +48,19 @@ class SensorValueMgr(PageBase):
 
     def List(self) :
         return config.render.SensorValueList()
+
+
+    def ImmediatelyList(self) :
+        return config.render.SensorValueImmediatelyList()
+
+    def ImmediatelyJson(self) :
+        rs = db.ReadImmediatelyData()
+        try :
+            r = rs[0]
+            Light = r.Light
+            Temperature = r.Temperature
+        except :
+            Light = 0
+            Temperature = 0.0
+        data = { 'Ts' : Ts2TmStr(int(time.time())), 'Light' : Light, 'Temperature' : Temperature }
+        return self.SucJsonData(data)

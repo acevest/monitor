@@ -1,0 +1,207 @@
+<%include file="header.html"/>
+  <div id="LightChart" style="width:540px;height:240px"></div>
+  <br>
+  <div id="TemperatureChart" style="width:540px;height:240px"></div>
+<script type="text/javascript" src="/static/highcharts/highcharts.js"></script>
+<script type="text/javascript" src="/static/highcharts/modules/exporting.js"></script>
+<script>
+function GetImmediatelyJson() {
+    var data = Object();
+    $.ajax({
+        url : 'SensorValueMgr',
+        async: false,
+        data: { action: 'ImmediatelyJson' },
+        dataType: 'json',
+        success: function(json) {
+            json.Data.datetime = new Date(json.Data.Ts.replace(/-/g,'/'));
+            data = json;
+        },
+        error: function() { },
+        beforeSend: function() { }
+    });
+
+    return data;
+}
+
+$(function () {
+    Highcharts.setOptions({
+        global: {
+            useUTC: false
+        }
+    });
+
+
+    var JsonData = []
+    $.ajax({
+        async: false,
+        data: { action: 'Json' },
+        dataType: 'json',
+        success: function(d) {
+                $.each(d, function(i) {
+                    r = d[i];
+                    r.datetime = new Date(r.Ts.replace(/-/g,'/'));
+                    JsonData.push(r)
+                });
+        },
+        error: function() { },
+        beforeSend: function() { }
+    });
+
+
+    $('#LightChart').highcharts({
+        chart: {
+            type: 'spline',
+            animation: Highcharts.svg, // don't animate in old IE
+            marginRight: 10,
+            events: {
+                load: function() {
+                    var series = this.series[0];                                
+                    setInterval(function() {                                    
+                        json = GetImmediatelyJson()
+                        if(json.Err == 0) {
+                            r = json.Data;
+                            series.addPoint([(new Date()).getTime(), +r.Light], true, true);                    
+                        }
+                    }, 1000); 
+                }
+            }
+        },
+        title: {
+            text: 'Light'
+        },
+        xAxis: {
+            type: 'datetime',
+            tickPixelInterval: 150
+        },
+        yAxis: {
+            title: {
+                text: 'Value'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+/*
+        tooltip: {
+            formatter: function() {
+                    return '<b>'+ this.series.name +'</b><br/>'+
+                    Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+
+                    Highcharts.numberFormat(this.y, 2);
+            }
+        },
+*/
+        plotOptions: {
+            spline : {
+                //lineColor: 'black',
+                marker: {
+                    enabled:false
+                }
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        exporting: {
+            enabled: false
+        },
+        series: [{
+            name: 'Light',
+            data: (function() {
+                var data = [];
+                var time = (new Date()).getTime();
+                var i;
+                for (i = -10; i <= 0; i++) {
+                    data.push({
+                        x: time + i * 1000,
+                        y: 0
+                    });
+                }
+                return data;
+            })()
+        }]
+    });
+
+
+
+
+    $('#TemperatureChart').highcharts({
+        chart: {
+            type: 'spline',
+            animation: Highcharts.svg, // don't animate in old IE
+            borderWidthborderWidth:0,
+            marginRight: 10,
+            events: {
+                load: function() {
+                    var series = this.series[0];                                
+                    setInterval(function() {                                    
+                        json = GetImmediatelyJson()
+                        if(json.Err == 0) {
+                            r = json.Data;
+                            series.addPoint([(new Date()).getTime(), +r.Temperature], true, true);                    
+                        }
+                    }, 1000); 
+                }
+            }
+        },
+        title: {
+            text: 'Temperature'
+        },
+        xAxis: {
+            type: 'datetime',
+            tickPixelInterval: 150
+        },
+        yAxis: {
+            title: {
+                text: '℃'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#000000'
+            }]
+        },
+/*
+        tooltip: {
+            formatter: function() {
+                    return '<b>'+ this.series.name +'</b><br/>'+
+                    Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+
+                    Highcharts.numberFormat(this.y, 2) + "<b> ℃</b>";
+            }
+        },
+*/
+        plotOptions: {
+            spline : {
+                //lineColor: 'black',
+                marker: {
+                    enabled:false
+                }
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        exporting: {
+            enabled: false
+        },
+        series: [{
+            name: 'Temperature',
+            data: (function() {
+                var data = [];
+                var time = (new Date()).getTime();
+                var i;
+                for (i = -10; i <= 0; i++) {
+                    data.push({
+                        x: time + i * 1000,
+                        y: 0
+                    });
+                }
+                return data;
+            })()
+        }]
+    });
+
+});
+</script>
+<%include file="footer.html"/>
