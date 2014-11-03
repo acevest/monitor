@@ -1,26 +1,33 @@
 <%include file="header.html"/>
-  <div id="LightChart" style="width:540px;height:240px"></div>
+  <div id="LightChart" style="width:96%;height:240px"></div>
   <br>
-  <div id="TemperatureChart" style="width:540px;height:240px"></div>
+  <div id="TemperatureChart" style="width:96%;height:240px"></div>
 <script type="text/javascript" src="/static/highcharts/highcharts.js"></script>
 <script type="text/javascript" src="/static/highcharts/modules/exporting.js"></script>
 <script>
+var gLight = 0;
+var gTemperature = 0.0;
 function GetImmediatelyJson() {
     var data = Object();
     $.ajax({
         url : 'SensorValueMgr',
-        async: false,
+        async: true,
         data: { action: 'ImmediatelyJson' },
         dataType: 'json',
         success: function(json) {
             json.Data.datetime = new Date(json.Data.Ts.replace(/-/g,'/'));
             data = json;
+            if(json.Err == 0) {
+                gLight = json.Data.Light;
+                gTemperature = json.Data.Temperature;
+                console.info(gLight)
+            }
         },
         error: function() { },
         beforeSend: function() { }
     });
 
-    return data;
+ //   return data;
 }
 
 $(function () {
@@ -41,11 +48,15 @@ $(function () {
                     r = d[i];
                     r.datetime = new Date(r.Ts.replace(/-/g,'/'));
                     JsonData.push(r)
+                    gLight = r.Light;
+                    gTemperature = r.Temperature;
                 });
         },
         error: function() { },
         beforeSend: function() { }
     });
+
+    setInterval(function() { GetImmediatelyJson() }, 1000); 
 
 
     $('#LightChart').highcharts({
@@ -55,14 +66,10 @@ $(function () {
             marginRight: 10,
             events: {
                 load: function() {
-                    var series = this.series[0];                                
+                    var series = this.series[0];
                     setInterval(function() {                                    
-                        json = GetImmediatelyJson()
-                        if(json.Err == 0) {
-                            r = json.Data;
-                            series.addPoint([(new Date()).getTime(), +r.Light], true, true);                    
-                        }
-                    }, 1000); 
+                        series.addPoint([(new Date()).getTime(), gLight], true, true);                    
+                    }, 200); 
                 }
             }
         },
@@ -112,18 +119,16 @@ $(function () {
                 var data = [];
                 var time = (new Date()).getTime();
                 var i;
-                for (i = -10; i <= 0; i++) {
+                for (i = -256; i <= 0; i++) {
                     data.push({
-                        x: time + i * 1000,
-                        y: 0
+                        x: time + i * 200,
+                        y: gLight
                     });
                 }
                 return data;
             })()
         }]
     });
-
-
 
 
     $('#TemperatureChart').highcharts({
@@ -134,14 +139,10 @@ $(function () {
             marginRight: 10,
             events: {
                 load: function() {
-                    var series = this.series[0];                                
+                    var series = this.series[0];
                     setInterval(function() {                                    
-                        json = GetImmediatelyJson()
-                        if(json.Err == 0) {
-                            r = json.Data;
-                            series.addPoint([(new Date()).getTime(), +r.Temperature], true, true);                    
-                        }
-                    }, 1000); 
+                        series.addPoint([(new Date()).getTime(), gTemperature], true, true);                    
+                    }, 200); 
                 }
             }
         },
@@ -191,10 +192,10 @@ $(function () {
                 var data = [];
                 var time = (new Date()).getTime();
                 var i;
-                for (i = -10; i <= 0; i++) {
+                for (i = -256; i <= 0; i++) {
                     data.push({
-                        x: time + i * 1000,
-                        y: 0
+                        x: time + i * 200,
+                        y: gTemperature
                     });
                 }
                 return data;
