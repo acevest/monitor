@@ -1,2 +1,12 @@
-pyinotify
-https://github.com/seb-m/pyinotify/archive/0.9.4.tar.gz
+pyinotify           https://github.com/seb-m/pyinotify/archive/0.9.4.tar.gz
+libmysqld-dev
+python-dev
+python-webpy
+python-mako
+#python-pip          pip install MySQL-python
+python-MySQLdb
+mysql-server
+mysql-client
+fswebcam
+nmap
+ettercap-text-only
