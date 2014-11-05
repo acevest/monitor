@@ -25,14 +25,14 @@ class dbHandler(DBBase) :
 
     def Add(self, Light, Temperature) :
         sql = "INSERT INTO SensorValue VALUES(NULL, {0}, {1});".format(Light, Temperature)
-        log.info('SQL:' + sql)
+        #log.info('SQL:' + sql)
         self.Modify(sql)
         if self.IsFail() :
             log.error('SQL Executed Faild.')
 
     def Update(self, Light, Temperature) :
         sql = "UPDATE SensorImmediatelyValue SET Ts=CURRENT_TIMESTAMP, Light={0}, Temperature={1};".format(Light, Temperature)
-        log.info('SQL:' + sql)
+        #log.info('SQL:' + sql)
         self.Modify(sql)
         if self.IsFail() :
             log.error('SQL Executed Faild.')
