@@ -16,6 +16,7 @@ import sys
 sys.path.append('..')
 import config
 from utils import *
+from mail  import SendMail
 
 log = CreateLogger(config.ACE_GLOBAL_LOG_PATH)
 
@@ -37,6 +38,17 @@ class dbHandler(DBBase) :
         if self.IsFail() :
             log.error('SQL Executed Faild.')
 
+
+    def Get(self) :
+        sql = "SELECT * FROM SensorImmediatelyValue LIMIT 1"
+        rs = self.Read(sql)
+        try :
+            r = rs[0]
+        except :
+            r = None
+
+        return r
+
 db = dbHandler()
 
 def main() :
@@ -52,15 +64,24 @@ def main() :
 
             values = line[1:].strip().split(':')
 
-            Light = values[0]
-            Temperature = values[1]
-            
+            Light = float(values[0])
+            Temperature = float(values[1])
+
+            r = db.Get()
+            if None != r :
+                OldLight = float(r.Light)
+                print("Light Light {0} OldLight {1}".format(Light, OldLight))
+                if (OldLight < 290 and Light > 340) or (Light - OldLight > 50) :
+                    log.info("Light was Turned On Light {0} OldLight {1}".format(Light, OldLight))
+                    SendMail("Light was Turned On", "Light {0} OldLight {1}".format(Light, OldLight))
+
+            db.Update(Light, Temperature)
+
             n = int(time.time()) / 600
             if n > LastInsert :
                 LastInsert = n
                 db.Add(Light, Temperature)
 
-            db.Update(Light, Temperature)
         except Exception, e :
             log.error(str(e))   
             continue
