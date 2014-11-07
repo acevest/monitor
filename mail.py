@@ -18,14 +18,6 @@ from utils import *
 
 log = CreateLogger(config.ACE_GLOBAL_LOG_PATH)
   
-mailto_list=[] 
-mail_host=""        #设置服务器
-mail_user=""        #用户名
-user_nick=""
-mail_pass=""        #口令 
-mail_postfix=""     #发件箱的后缀
-
-
 def send_mail(to_list, mail_host, mail_user, user_nick, mail_pass, mail_postfix, sub, content) :
     #def send_mail(to_list,sub,content):                                 #to_list：收件人；sub：主题；content：邮件内容
     me=user_nick+"<"+mail_user+"@"+mail_postfix+">"                 #这里的hello可以任意设置，收到信后，将按照设置显示
@@ -48,6 +40,7 @@ def send_mail(to_list, mail_host, mail_user, user_nick, mail_pass, mail_postfix,
 def SendMail(title, msg) :
     cnfp = ConfigParser.ConfigParser()
     cnfp.read(config.ACE_GLOBAL_CONF_PATH)
+    mailto_list = []
     mailto_list.append(cnfp.get('EMAIL', 'MAILTO'))
     mail_host = cnfp.get('EMAIL', 'MAILHOST')
     mail_user = cnfp.get('EMAIL', 'MAILUSER')

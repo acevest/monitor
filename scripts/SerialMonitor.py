@@ -77,7 +77,7 @@ def main() :
 
             db.Update(Light, Temperature)
 
-            n = int(time.time()) / 600
+            n = int(time.time()) / 60
             if n > LastInsert :
                 LastInsert = n
                 db.Add(Light, Temperature)
