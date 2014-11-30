@@ -55,7 +55,12 @@ def main() :
     LastInsert = 0
     while True :
         try :
-            s = serial.Serial('/dev/ttyACM0', 9600)
+            try :
+                s = serial.Serial('/dev/ttyACM0', 9600)
+            except Exception, e :
+                time.sleep(1)
+                log.error(str(e))   
+                continue
 
             while True :
                 line = s.readline().strip()

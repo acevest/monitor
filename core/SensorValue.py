@@ -21,7 +21,7 @@ class dbSensorValue(DBBase) :
     def __init__(self) :
         super(dbSensorValue, self).__init__(config.db)
 
-    def ReadData(self, cnt=288):
+    def ReadData(self, cnt=1000):
         sql = "SELECT * FROM SensorValue ORDER BY Ts DESC LIMIT {0};".format(cnt)
         return self.Read(sql)
 
