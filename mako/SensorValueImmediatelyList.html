@@ -1,4 +1,6 @@
 <%include file="header.html"/>
+  <div id="HumanBody">  </div>
+  <br>
   <div id="LightChart" style="width:96%;height:240px"></div>
   <br>
   <div id="TemperatureChart" style="width:96%;height:240px"></div>
@@ -7,6 +9,7 @@
 <script>
 var gLight = 0;
 var gTemperature = 0.0;
+var gHumanBody = 0;
 function GetImmediatelyJson() {
     var data = Object();
     $.ajax({
@@ -20,7 +23,9 @@ function GetImmediatelyJson() {
             if(json.Err == 0) {
                 gLight = json.Data.Light;
                 gTemperature = json.Data.Temperature;
-                console.info(gLight)
+                gHumanBody = json.Data.HumanBody;
+                console.info(gHumanBody);
+                $("#HumanBody").html('Human Body: ' + gHumanBody);
             }
         },
         error: function() { },

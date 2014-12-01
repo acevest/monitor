@@ -59,8 +59,11 @@ class SensorValueMgr(PageBase):
             r = rs[0]
             Light = r.Light
             Temperature = r.Temperature
+            HumanBody   = r.HumanBody
         except :
             Light = 0
             Temperature = 0.0
-        data = { 'Ts' : Ts2TmStr(int(time.time())), 'Light' : Light, 'Temperature' : Temperature }
+            HumanBody = 0
+
+        data = { 'Ts' : Ts2TmStr(int(time.time())), 'Light' : Light, 'Temperature' : Temperature, 'HumanBody' : HumanBody }
         return self.SucJsonData(data)

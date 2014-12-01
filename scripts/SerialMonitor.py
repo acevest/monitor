@@ -31,8 +31,8 @@ class dbHandler(DBBase) :
         if self.IsFail() :
             log.error('SQL Executed Faild.')
 
-    def Update(self, Light, Temperature) :
-        sql = "UPDATE SensorImmediatelyValue SET Ts=CURRENT_TIMESTAMP, Light={0}, Temperature={1};".format(Light, Temperature)
+    def Update(self, Light, Temperature, HumanBody) :
+        sql = "UPDATE SensorImmediatelyValue SET Ts=CURRENT_TIMESTAMP, Light={0}, Temperature={1}, HumanBody={2};".format(Light, Temperature, HumanBody)
         #log.info('SQL:' + sql)
         self.Modify(sql)
         if self.IsFail() :
@@ -55,15 +55,11 @@ def main() :
     LastInsert = 0
     while True :
         try :
-            try :
-                s = serial.Serial('/dev/ttyACM0', 9600)
-            except Exception, e :
-                time.sleep(1)
-                log.error(str(e))   
-                continue
+            s = serial.Serial('/dev/ttyACM0', 9600)
 
             while True :
                 line = s.readline().strip()
+                print line
                 if line[0] == '>' :
                     break
 
@@ -71,16 +67,25 @@ def main() :
 
             Light = float(values[0])
             Temperature = float(values[1])
+            HumanBody = int(values[2])
 
             r = db.Get()
             if None != r :
-                OldLight = float(r.Light)
-                print("Light Light {0} OldLight {1}".format(Light, OldLight))
+                OldLight        = float(r.Light)
+                OldHumanBody    = int(r.HumanBody)
+                print("Light {0} OldLight {1} HumanBody {2} OldHumanBody {3}".format(Light, OldLight, HumanBody, OldHumanBody))
                 if (OldLight < 290 and Light > 340) or (Light - OldLight > 50) :
                     log.info("Light was Turned On Light {0} OldLight {1}".format(Light, OldLight))
                     SendMail("Light was Turned On", "Light {0} OldLight {1}".format(Light, OldLight))
 
-            db.Update(Light, Temperature)
+                if HumanBody > 0 :
+                    log.info("HumanBody {0} OldHumanBody {1}".format(HumanBody, OldHumanBody))
+
+                if OldHumanBody == 0 and HumanBody > 0 :
+                    log.info("Someone Accessed. HumanBody {0} OldHumanBody {1}".format(HumanBody, OldHumanBody))
+                    SendMail("Someone Accessed", "HumanBody {0} OldHumanBody {1}".format(HumanBody, OldHumanBody))
+
+            db.Update(Light, Temperature, HumanBody)
 
             n = int(time.time()) / 60
             if n > LastInsert :
@@ -89,6 +94,7 @@ def main() :
 
         except Exception, e :
             log.error(str(e))   
+            time.sleep(1)
             continue
     
 
