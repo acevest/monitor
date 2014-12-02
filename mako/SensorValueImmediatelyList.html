@@ -1,5 +1,5 @@
 <%include file="header.html"/>
-  <div id="HumanBody">  </div>
+  <div id="DataTip">  </div>
   <br>
   <div id="LightChart" style="width:96%;height:240px"></div>
   <br>
@@ -24,8 +24,8 @@ function GetImmediatelyJson() {
                 gLight = json.Data.Light;
                 gTemperature = json.Data.Temperature;
                 gHumanBody = json.Data.HumanBody;
-                console.info(gHumanBody);
-                $("#HumanBody").html('Human Body: ' + gHumanBody);
+                //$("#DataTip").html(JSON.stringify(json.Data));
+                $("#DataTip").html('Light:'+gLight+' Temperature:'+gTemperature+' HumanBody:'+gHumanBody+'&nbsp;&nbsp;&nbsp;&nbsp;['+json.Data.datetime+']')
             }
         },
         error: function() { },
