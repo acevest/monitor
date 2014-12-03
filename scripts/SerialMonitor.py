@@ -32,7 +32,7 @@ class dbHandler(DBBase) :
             log.error('SQL Executed Faild.')
 
     def Update(self, Light, Temperature, HumanBody) :
-        sql = "UPDATE SensorImmediatelyValue SET Ts=CURRENT_TIMESTAMP, Light={0}, Temperature={1}, HumanBody={2};".format(Light, Temperature, HumanBody)
+        sql = "UPDATE SensorImmediatelyValue SET Time=CURRENT_TIMESTAMP, Light={0}, Temperature={1}, HumanBody={2};".format(Light, Temperature, HumanBody)
         #log.info('SQL:' + sql)
         self.Modify(sql)
         if self.IsFail() :
@@ -76,14 +76,16 @@ def main() :
                 print("Light {0} OldLight {1} HumanBody {2} OldHumanBody {3}".format(Light, OldLight, HumanBody, OldHumanBody))
                 if (OldLight < 290 and Light > 340) or (Light - OldLight > 50) :
                     log.info("Light was Turned On Light {0} OldLight {1}".format(Light, OldLight))
-                    SendMail("Light was Turned On", "Light {0} OldLight {1}".format(Light, OldLight))
+                    if int(r.Switch) == 1 :
+                        SendMail("Light was Turned On", "Light {0} OldLight {1}".format(Light, OldLight))
 
                 if HumanBody > 0 :
                     log.info("HumanBody {0} OldHumanBody {1}".format(HumanBody, OldHumanBody))
 
-                if OldHumanBody == 0 and HumanBody > 0 :
+                if OldHumanBody == 0 and HumanBody > 10 :
                     log.info("Someone Accessed. HumanBody {0} OldHumanBody {1}".format(HumanBody, OldHumanBody))
-                    SendMail("Someone Accessed", "HumanBody {0} OldHumanBody {1}".format(HumanBody, OldHumanBody))
+                    if int(r.Switch) == 1 :
+                        SendMail("Someone Accessed", "HumanBody {0} OldHumanBody {1}".format(HumanBody, OldHumanBody))
 
             db.Update(Light, Temperature, HumanBody)
 

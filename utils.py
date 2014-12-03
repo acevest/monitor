@@ -119,7 +119,8 @@ class PageBase(object):
         self.Ret['Err'] = 0
         self.Ret['Msg'] = 'success'
         self.Ret['Data'] = data
-        return json.dumps(self.Ret, ensure_ascii=False)
+        r = json.dumps(self.Ret, ensure_ascii=False)
+        return r
 
     def AuthorizedUser(self) :
         return True

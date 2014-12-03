@@ -1,9 +1,10 @@
 DROP TABLE IF EXISTS `SensorImmediatelyValue`;
 CREATE TABLE `SensorImmediatelyValue` (
-    `Ts` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `Time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `Switch` INTEGER NOT NULL DEFAULT 0,
     `Light` FLOAT NOT NULL DEFAULT 0.0,
     `Temperature` FLOAT NOT NULL DEFAULT 0.0,
     `HumanBody` INTEGER NOT NULL DEFAULT 0,
-    PRIMARY KEY (`Ts`)
+    PRIMARY KEY (`Time`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-INSERT INTO SensorImmediatelyValue VALUES(NULL, 0, 0, 0);
+INSERT INTO SensorImmediatelyValue VALUES(NULL, 1, 0, 0, 0);

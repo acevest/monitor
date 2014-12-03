@@ -1,5 +1,11 @@
 <%include file="header.html"/>
+<%
+SwitchChecked = "checked"
+if int(Cfg.Switch) == 0 :
+    SwitchChecked = ""
+%>
   <div id="DataTip">  </div>
+  <div> <input id="Switch" type="checkbox" ${SwitchChecked} /> </div>
   <br>
   <div id="LightChart" style="width:96%;height:240px"></div>
   <br>
@@ -18,7 +24,7 @@ function GetImmediatelyJson() {
         data: { action: 'ImmediatelyJson' },
         dataType: 'json',
         success: function(json) {
-            json.Data.datetime = new Date(json.Data.Ts.replace(/-/g,'/'));
+            json.Data.datetime = new Date(json.Data.Time.replace(/-/g,'/'));
             data = json;
             if(json.Err == 0) {
                 gLight = json.Data.Light;
@@ -40,6 +46,17 @@ $(function () {
         global: {
             useUTC: false
         }
+    });
+
+    $("#Switch").click(function() {
+        $.ajax({
+            async: false,
+            data: { action: 'Switch', Value : $(this).prop("checked") ? 1 : 0 },
+            success: function(d) {
+            },
+            error: function() { },
+            beforeSend: function() { }
+        });
     });
 
 

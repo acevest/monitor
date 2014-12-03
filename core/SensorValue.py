@@ -29,14 +29,24 @@ class dbSensorValue(DBBase) :
         sql = "SELECT * FROM SensorImmediatelyValue LIMIT 1;"
         return self.Read(sql)
 
+    def Switch(self, value) :
+        sql = "UPDATE SensorImmediatelyValue SET Switch={0}".format(value)
+        self.Modify(sql)
+        return self.Ret()
+
 db = dbSensorValue()
 
 class SensorValueMgr(PageBase):
     def __init__(self) :
         super(SensorValueMgr, self).__init__()
         self.SetActionHandler('Json',    self.Json)
+        self.SetActionHandler('Switch',  self.Switch)
         self.SetActionHandler('ImmediatelyList',    self.ImmediatelyList)
         self.SetActionHandler('ImmediatelyJson',    self.ImmediatelyJson)
+    def Switch(self) :
+        Value = web.input().get('Value', 1)
+        return db.Switch(Value)
+        
 
     def Json(self) :
         rs = db.ReadData()
@@ -51,19 +61,15 @@ class SensorValueMgr(PageBase):
 
 
     def ImmediatelyList(self) :
-        return config.render.SensorValueImmediatelyList()
+        rs = db.ReadImmediatelyData()
+        return config.render.SensorValueImmediatelyList(Cfg=rs[0])
 
     def ImmediatelyJson(self) :
         rs = db.ReadImmediatelyData()
         try :
             r = rs[0]
-            Light = r.Light
-            Temperature = r.Temperature
-            HumanBody   = r.HumanBody
         except :
-            Light = 0
-            Temperature = 0.0
-            HumanBody = 0
+            pass # return Err
 
-        data = { 'Ts' : Ts2TmStr(int(time.time())), 'Light' : Light, 'Temperature' : Temperature, 'HumanBody' : HumanBody }
-        return self.SucJsonData(data)
+        r.Time = Ts2TmStr(int(time.time()))
+        return self.SucJsonData(r)
