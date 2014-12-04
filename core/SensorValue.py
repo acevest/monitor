@@ -21,8 +21,8 @@ class dbSensorValue(DBBase) :
     def __init__(self) :
         super(dbSensorValue, self).__init__(config.db)
 
-    def ReadData(self, cnt=1000):
-        sql = "SELECT * FROM SensorValue ORDER BY Ts DESC LIMIT {0};".format(cnt)
+    def ReadData(self, cnt=1000, days=1):
+        sql = "SELECT * FROM SensorValue WHERE UNIX_TIMESTAMP(Ts) mod {0} = 0 ORDER BY Ts DESC LIMIT {1};".format(cnt, days*60)
         return self.Read(sql)
 
     def ReadImmediatelyData(self) :
@@ -49,7 +49,11 @@ class SensorValueMgr(PageBase):
         
 
     def Json(self) :
-        rs = db.ReadData()
+        try :
+            days = int(web.input().get('Days', 1))
+        except :
+            days = 1
+        rs = db.ReadData(1000, days)
         rs = rs[::-1]
         for r in rs :
             r.Ts = str(r.Ts)
