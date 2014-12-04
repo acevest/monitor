@@ -22,7 +22,7 @@ class dbSensorValue(DBBase) :
         super(dbSensorValue, self).__init__(config.db)
 
     def ReadData(self, cnt=1000, days=1):
-        sql = "SELECT * FROM SensorValue WHERE UNIX_TIMESTAMP(Ts) mod {0} = 0 ORDER BY Ts DESC LIMIT {1};".format(cnt, days*60)
+        sql = "SELECT * FROM SensorValue WHERE UNIX_TIMESTAMP(Ts) mod {0} = 0 ORDER BY Ts DESC LIMIT {1};".format(days*60, cnt)
         return self.Read(sql)
 
     def ReadImmediatelyData(self) :
