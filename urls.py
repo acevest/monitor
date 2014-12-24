@@ -9,5 +9,6 @@
 
 urls = (
     '/',                    'Index',
-    '/SensorValueMgr',      'core.SensorValue.SensorValueMgr'
+    '/SensorValueMgr',      'core.SensorValue.SensorValueMgr',
+    '/WeiXin',              'core.WeiXin.WeiXinMgr',
 )
