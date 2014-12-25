@@ -8,7 +8,7 @@
 # ------------------------------------------------------------------------
 
 urls = (
-    '/',                    'Index',
+    '/Index',               'Index',
+    '/',                    'core.WeiXin.WeiXinMgr',
     '/SensorValueMgr',      'core.SensorValue.SensorValueMgr',
-    '/WeiXin',              'core.WeiXin.WeiXinMgr',
 )

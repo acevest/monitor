@@ -12,8 +12,7 @@ import web
 import json
 import sys
 import config
-import commands
-import serial
+import hashlib
 from utils import *
 
 #class WeiXinMgr(PageBase):
@@ -25,4 +24,11 @@ class WeiXinMgr(PageBase):
         nonce     = wi.get('nonce')
         echostr   = wi.get('echostr')
 
+        token     = 'token'
+
+        s = "".join(sorted([timestamp, nonce, token]))
+        print s
+        print hashlib.sha1(s)
         print signature, timestamp, nonce, echostr
+
+        return echostr

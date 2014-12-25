@@ -13,6 +13,7 @@ from utils import *
 
 cnfp = ConfigParser.ConfigParser()
 cnfp.read(config.ACE_GLOBAL_CONF_PATH)
+log = CreateLogger(config.ACE_GLOBAL_LOG_PATH)
 
 params = dict(
     login_email     = cnfp.get('DNSPOD', 'EMAIL'),
@@ -49,6 +50,7 @@ if __name__ == '__main__':
         try:
             ip = getip()
             print ip
+            log.info('dnspod ip {0}'.format(ip))
             if current_ip != ip:
                 if ddns(ip):
                     current_ip = ip
