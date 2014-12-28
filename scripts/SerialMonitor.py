@@ -17,6 +17,11 @@ sys.path.append('..')
 import config
 from utils import *
 from mail  import SendMail
+from weixin import SendWeiXinMsg
+
+def SendMsg(title, msg) :
+    SendMail(title, msg)
+    SendWeiXinMsg(msg)
 
 log = CreateLogger(config.ACE_GLOBAL_LOG_PATH)
 
@@ -77,7 +82,7 @@ def main() :
                 if (OldLight < 290 and Light > 340) or (Light - OldLight > 50) :
                     log.info("Light was Turned On Light {0} OldLight {1}".format(Light, OldLight))
                     if int(r.Switch) == 1 :
-                        SendMail("Light was Turned On", "Light {0} OldLight {1}".format(Light, OldLight))
+                        SendMsg("Light was Turned On", "Light {0} OldLight {1}".format(Light, OldLight))
 
                 if HumanBody > 0 :
                     log.info("HumanBody {0} OldHumanBody {1}".format(HumanBody, OldHumanBody))
@@ -85,7 +90,7 @@ def main() :
                 if OldHumanBody == 0 and HumanBody > 10 :
                     log.info("Someone Accessed. HumanBody {0} OldHumanBody {1}".format(HumanBody, OldHumanBody))
                     if int(r.Switch) == 1 :
-                        SendMail("Someone Accessed", "HumanBody {0} OldHumanBody {1}".format(HumanBody, OldHumanBody))
+                        SendMsg("Someone Accessed", "HumanBody {0} OldHumanBody {1}".format(HumanBody, OldHumanBody))
 
             db.Update(Light, Temperature, HumanBody)
 
