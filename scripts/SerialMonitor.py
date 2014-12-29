@@ -61,7 +61,6 @@ def main() :
     while True :
         try :
             s = serial.Serial('/dev/ttyACM0', 9600)
-
             while True :
                 line = s.readline().strip()
                 print line

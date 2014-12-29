@@ -13,7 +13,6 @@ import urllib2
 import ConfigParser
 from utils import * 
 
-
 def GET_TOKEN(corpid, corpsecret) :
     url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={0}&corpsecret={1}".format(corpid, corpsecret)
     req = urllib2.Request(url)

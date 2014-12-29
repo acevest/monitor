@@ -15,7 +15,6 @@ import ConfigParser
 from email.mime.text import MIMEText  
 import config
 from utils import * 
-
   
 def send_mail(to_list, mail_host, mail_user, user_nick, mail_pass, mail_postfix, sub, content) :
     #def send_mail(to_list,sub,content):                                 #to_list：收件人；sub：主题；content：邮件内容

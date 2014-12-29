@@ -15,8 +15,6 @@ import re,urllib2
 import smtplib  
 import ConfigParser
 from email.mime.text import MIMEText  
-#sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/' + '..'))
-sys.path.append('..')
 import config
 from utils import * 
 from mail  import SendMail
@@ -47,13 +45,8 @@ class GetWanIP:
         return re.search('\d+\.\d+\.\d+\.\d+',str).group(0)
 
 
-
-
-
-
 cnfp = ConfigParser.ConfigParser()
 cnfp.read(config.ACE_GLOBAL_CONF_PATH)
-
 params = dict(
     login_email     = cnfp.get('DNSPOD', 'EMAIL'),
     login_password  = cnfp.get('DNSPOD', 'PASSWD'),
