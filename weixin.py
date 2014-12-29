@@ -27,8 +27,9 @@ def POST(url, data) :
     logging.info("request: " + url + " " + data)
     try :
         response = urllib2.urlopen(req, data) 
-        print response.read()
-        logging.info("response: " + response.read())
+        rsp = response.read()
+        print rsp
+        logging.info("response: " + rsp)
         return True
     except :
         pass
