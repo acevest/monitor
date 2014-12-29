@@ -15,25 +15,15 @@ import MySQLdb
 import commands
 import json
 import time
+from mail  import SendMail
+from weixin import SendWeiXinMsg
 
+def init_logging(path) :
+    logging.basicConfig(filename=path, level = logging.INFO, format ='%(levelname)s\t%(asctime)s: %(message)s')
 
-def CreateLogger(logpath, level=logging.DEBUG)  :
-    logger  = logging.getLogger(logpath)
-    fmtr    = logging.Formatter('%(levelname)s\t%(asctime)s: %(message)s')
-
-    fileHdlr    = logging.FileHandler(logpath)
-    fileHdlr.setFormatter(fmtr)
-    fileHdlr.setLevel(level)
-
-    streamHdlr  = logging.StreamHandler()
-    streamHdlr.setFormatter(fmtr)
-    streamHdlr.setLevel(level)
-
-    logger.addHandler(fileHdlr)
-    logger.addHandler(streamHdlr)
-    logger.setLevel(level)
-
-    return logger
+def SendMsg(title, msg) :
+    if not SendWeiXinMsg(msg) :
+        SendMail(title, msg)
 
 class Storage(dict) :
     def __getattr__(self, key) :

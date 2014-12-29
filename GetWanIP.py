@@ -11,31 +11,26 @@ import socket
 import time
 import sys
 import os
+import logging
 import re,urllib2
 import smtplib  
 import ConfigParser
 from email.mime.text import MIMEText  
 import config
 from utils import * 
-from mail  import SendMail
-from weixin import SendWeiXinMsg
-
-def SendMsg(title, msg) :
-    SendMail(title, msg)
-    SendWeiXinMsg(msg)
 
 TMP_FILE_PATH = '/tmp/GetWanIP.txt'
-log = CreateLogger(config.ACE_GLOBAL_LOG_PATH)
+init_logging(config.ACE_GLOBAL_LOG_PATH)
   
 class GetWanIP:
     def GetIP(self):
         try:
-            log.info('Try ip.qq.com')
+            logging.info('Try ip.qq.com')
             WanIP = self.Visit('http://ip.qq.com')
         except:
             s = 'Failed to Get WanIP!!!'
             WanIP = s
-            log.error(s)
+            logging.error(s)
         return WanIP
 
     def Visit(self,url):
@@ -72,8 +67,9 @@ def ddns(ip):
 
 if __name__ == '__main__':  
     WanIP = GetWanIP().GetIP()
+
     if not "".join(WanIP.split(".")).isdigit() :
-        log.error("Invalid IP Address {0}".format(WanIP))
+        logging.error("Invalid IP Address {0}".format(WanIP))
         sys.exit(0)
     try :
         fd = open(TMP_FILE_PATH)
@@ -92,5 +88,5 @@ if __name__ == '__main__':
         else :
             s += u' 但是DDNS是失败'
 
-        log.info(s)
+        logging.info(s)
         SendMsg(u'外网IP有变动', s)

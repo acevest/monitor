@@ -14,7 +14,7 @@ import smtplib
 import ConfigParser
 from email.mime.text import MIMEText  
 import config
-from utils import * 
+import logging
   
 def send_mail(to_list, mail_host, mail_user, user_nick, mail_pass, mail_postfix, sub, content) :
     #def send_mail(to_list,sub,content):                                 #to_list：收件人；sub：主题；content：邮件内容
@@ -31,7 +31,6 @@ def send_mail(to_list, mail_host, mail_user, user_nick, mail_pass, mail_postfix,
     s.close()  
 
 def SendMail(title, msg) :
-    log = CreateLogger(config.ACE_GLOBAL_LOG_PATH)
     cnfp = ConfigParser.ConfigParser()
     cnfp.read(config.ACE_GLOBAL_CONF_PATH)
     mailto_list = []
@@ -46,11 +45,11 @@ def SendMail(title, msg) :
     try :
         print mailto_list, mail_host,mail_user, user_nick, mail_pass, mail_postfix
         send_mail(mailto_list,mail_host, mail_user, user_nick, mail_pass, mail_postfix, title, msg)
-        log.info('发送成功')
+        logging.info('发送成功')
         return True
     except Exception, e:  
-        log.error(str(e))
-        log.error('发送失败')
+        logging.error(str(e))
+        logging.error('发送失败')
         return False
 
     return False

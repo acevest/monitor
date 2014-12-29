@@ -13,35 +13,27 @@ import commands
 import web
 import json
 import sys
-sys.path.append('..')
+import logging
 import config
 from utils import *
-from mail  import SendMail
-from weixin import SendWeiXinMsg
-
-def SendMsg(title, msg) :
-    SendMail(title, msg)
-    SendWeiXinMsg(msg)
-
-log = CreateLogger(config.ACE_GLOBAL_LOG_PATH)
 
 class dbHandler(DBBase) :
     def __init__(self) :
         super(dbHandler, self).__init__(config.db)
 
-    def Add(self, Light, Temperature) :
-        sql = "INSERT INTO SensorValue VALUES(NULL, {0}, {1});".format(Light, Temperature)
-        #log.info('SQL:' + sql)
+    def Add(self, Light, Temperature, HumanBody) :
+        sql = "INSERT INTO SensorValue VALUES(NULL, {0}, {1}, {2});".format(Light, Temperature, HumanBody)
+        #logging.info('SQL:' + sql)
         self.Modify(sql)
         if self.IsFail() :
-            log.error('SQL Executed Faild.')
+            logging.error('SQL Executed Faild.')
 
     def Update(self, Light, Temperature, HumanBody) :
         sql = "UPDATE SensorImmediatelyValue SET Time=CURRENT_TIMESTAMP, Light={0}, Temperature={1}, HumanBody={2};".format(Light, Temperature, HumanBody)
-        #log.info('SQL:' + sql)
+        #logging.info('SQL:' + sql)
         self.Modify(sql)
         if self.IsFail() :
-            log.error('SQL Executed Faild.')
+            logging.error('SQL Executed Faild.')
 
 
     def Get(self) :
@@ -79,15 +71,15 @@ def main() :
                 OldHumanBody    = int(r.HumanBody)
                 print("Light {0} OldLight {1} HumanBody {2} OldHumanBody {3}".format(Light, OldLight, HumanBody, OldHumanBody))
                 if (OldLight < 290 and Light > 340) or (Light - OldLight > 50) :
-                    log.info("Light was Turned On Light {0} OldLight {1}".format(Light, OldLight))
+                    logging.info("Light was Turned On Light {0} OldLight {1}".format(Light, OldLight))
                     if int(r.Switch) == 1 :
                         SendMsg("Light was Turned On", "Light {0} OldLight {1}".format(Light, OldLight))
 
                 if HumanBody > 0 :
-                    log.info("HumanBody {0} OldHumanBody {1}".format(HumanBody, OldHumanBody))
+                    logging.info("HumanBody {0} OldHumanBody {1}".format(HumanBody, OldHumanBody))
 
                 if OldHumanBody == 0 and HumanBody > 10 :
-                    log.info("Someone Accessed. HumanBody {0} OldHumanBody {1}".format(HumanBody, OldHumanBody))
+                    logging.info("Someone Accessed. HumanBody {0} OldHumanBody {1}".format(HumanBody, OldHumanBody))
                     if int(r.Switch) == 1 :
                         SendMsg("Someone Accessed", "HumanBody {0} OldHumanBody {1}".format(HumanBody, OldHumanBody))
 
@@ -96,10 +88,10 @@ def main() :
             n = int(time.time()) / 60
             if n > LastInsert :
                 LastInsert = n
-                db.Add(Light, Temperature)
+                db.Add(Light, Temperature, HumanBody)
 
         except Exception, e :
-            log.error(str(e))   
+            logging.error(str(e))   
             time.sleep(1)
             continue
     

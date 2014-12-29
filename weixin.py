@@ -10,8 +10,8 @@ import json
 import config
 import urllib
 import urllib2
+import logging
 import ConfigParser
-from utils import * 
 
 def GET_TOKEN(corpid, corpsecret) :
     url = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid={0}&corpsecret={1}".format(corpid, corpsecret)
@@ -24,8 +24,15 @@ def POST(url, data) :
     req.add_header('Content-Type', 'application/json')
     data = json.dumps(data, ensure_ascii=False)
     print data
-    response = urllib2.urlopen(req, data) 
-    return response.read()
+    logging.info("request: " + url + " " + data)
+    try :
+        response = urllib2.urlopen(req, data) 
+        print response.read()
+        logging.info("response: " + response.read())
+        return True
+    except :
+        pass
+    return False
 
 
 def SEND_MSG(msg) :
@@ -48,11 +55,12 @@ def SEND_MSG(msg) :
             "safe" : "0"
         }
 
-        POST(url, data)
+        return POST(url, data)
 
     except Exception, e:  
-        log = CreateLogger(config.ACE_GLOBAL_LOG_PATH)
-        log.error(str(e))
+        logging.error(str(e))
+
+    return False
 
 def SendWeiXinMsg(msg) :
-    SEND_MSG(msg)
+    return SEND_MSG(msg)
