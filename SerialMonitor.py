@@ -48,6 +48,26 @@ class dbHandler(DBBase) :
 
 db = dbHandler()
 
+import RPi.GPIO as GPIO
+class PiMgr(Storage) :
+    def __init__(self) :
+        super(PiMgr, self).__init__()
+        self.LedPin = 7
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(self.LedPin, GPIO.OUT)
+        self.LedTimeout = 30
+        self.LedTurnOnTs = 0
+
+    def TurnLedOn(self) :
+        GPIO.output(self.LedPin, GPIO.HIGH)
+        self.LedTurnOnTs = int(time.time())
+
+    def TurnLedOff(self) :
+        if int(time.time()) - self.LedTurnOnTs > self.LedTimeout :
+            GPIO.output(self.LedPin, GPIO.LOW)
+
+pimgr = PiMgr()
+
 def main() :
     LastInsert = 0
     while True :
@@ -90,6 +110,10 @@ def main() :
                 LastInsert = n
                 db.Add(Light, Temperature, HumanBody)
 
+            if HumanBody > 0 :
+                pimgr.TurnLedOn()
+
+            pimgr.TurnLedOff()
         except Exception, e :
             logging.error(str(e))   
             time.sleep(1)

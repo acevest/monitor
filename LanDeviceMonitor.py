@@ -21,7 +21,7 @@ class dbHandler(DBBase) :
         super(dbHandler, self).__init__(config.db)
 
     def Add(self, mac) :
-        sql = "INSERT INTO Devices(MacAddr, Name, State, Ts) VALUES('{0}', 'Unknown', 1, CURRENT_TIMESTAMP);".format(mac)
+        sql = "INSERT INTO Devices(MacAddr, Name, State, Ts, Notify) VALUES('{0}', 'Unknown', 1, CURRENT_TIMESTAMP, 1);".format(mac)
         logging.info('SQL:' + sql)
         self.Modify(sql)
         if self.IsFail() :
@@ -83,6 +83,11 @@ def main() :
     Switch2AliveMac = set()
     Switch2DeadMac  = set()
 
+
+    for r in macrs :
+        if r.Notify == 0 :
+            macs.remove(r.MacAddr)
+            continue
 
     for r in macrs :
         dbmacs.add(r.MacAddr)
