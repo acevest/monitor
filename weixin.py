@@ -49,7 +49,7 @@ def SEND_MSG(msg) :
         data = {
             "touser" : "@all",
             "msgtype" : "text",
-            "agentid" : "0",
+            "agentid" : "2",
             "text" : {
                 "content" : msg
             },

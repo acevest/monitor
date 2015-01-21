@@ -15,7 +15,6 @@ from utils import *
 
 init_logging(config.ACE_GLOBAL_LOG_PATH)
 
-
 class dbHandler(DBBase) :
     def __init__(self) :
         super(dbHandler, self).__init__(config.db)
@@ -86,7 +85,10 @@ def main() :
 
     for r in macrs :
         if r.Notify == 0 :
-            macs.remove(r.MacAddr)
+            try :
+                macs.remove(r.MacAddr)
+            except :
+                pass
             continue
 
     for r in macrs :

@@ -122,7 +122,7 @@ class PageBase(object):
 
     def REQUEST_HANDLER(self) :
         self.action = web.input().get('action', '').strip()
-        return self.ActionMap.get(self.action, self.UNIMPLEMENTED)()
+        return self.ActionMap.get(self.action, self.List)()
 
     def GET(self) :
         if not self.AuthorizedUser() :

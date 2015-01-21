@@ -17,6 +17,7 @@ import logging
 import config
 from utils import *
 
+init_logging(config.ACE_GLOBAL_LOG_PATH)
 class dbHandler(DBBase) :
     def __init__(self) :
         super(dbHandler, self).__init__(config.db)

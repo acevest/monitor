@@ -10,6 +10,6 @@
 urls = (
     '/',                    'Index',
     '/Index',               'Index',
-    '/WeiXin',              'core.WeiXin.WeiXinMgr',
+    '/WeChat',              'core.WeChat.WeChatMgr',
     '/SensorValueMgr',      'core.SensorValue.SensorValueMgr',
 )

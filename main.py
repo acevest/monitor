@@ -12,6 +12,9 @@ import web
 import urls
 import config
 from utils import *
+from web.wsgiserver import CherryPyWSGIServer
+CherryPyWSGIServer.ssl_certificate = "/etc/monitor/server.crt"
+CherryPyWSGIServer.ssl_private_key = "/etc/monitor/server.key.unsecure"
 
 class Failed:
     def GET(self) :

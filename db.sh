@@ -1,1 +1,1 @@
-mysql -u root -proot
+mysql monitor -u root -proot

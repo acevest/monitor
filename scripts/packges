@@ -10,3 +10,5 @@ mysql-client
 fswebcam
 nmap
 ettercap-text-only
+python-crypto
+expect
