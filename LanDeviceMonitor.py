@@ -6,6 +6,7 @@
 #              Mon Dec 29 20:25:56 2014
 # Description: none
 # ------------------------------------------------------------------------
+import time
 import os
 import sys
 import commands
@@ -20,7 +21,7 @@ class dbHandler(DBBase) :
         super(dbHandler, self).__init__(config.db)
 
     def Add(self, mac) :
-        sql = "INSERT INTO Devices(MacAddr, Name, State, Ts, Notify) VALUES('{0}', 'Unknown', 1, CURRENT_TIMESTAMP, 1);".format(mac)
+        sql = "INSERT INTO Devices(MacAddr, Name, State, Ts, Notify, AddTs) VALUES('{0}', 'Unknown', 1, CURRENT_TIMESTAMP, 1, from_unixtime({1}));".format(mac, int(time.time()))
         logging.info('SQL:' + sql)
         self.Modify(sql)
         if self.IsFail() :
@@ -47,7 +48,7 @@ class dbHandler(DBBase) :
                 s += r.Name
                 s += ':'
                 s += r.MacAddr
-                s += ']'
+                s += ']\n'
 
         return s
 
@@ -111,21 +112,19 @@ def main() :
 
     msg = u''
     if len(NewMac) != 0 :
-        msg += u' New Device: '
+        msg += u'New Device:\n'
         msg += db.BuildMacListStr(NewMac)
-        msg += ';'
 
     if len(Switch2AliveMac) != 0 :
-        msg += u' Switch to Alive Device: '
+        msg += u'Alive Device:\n'
         msg += db.BuildMacListStr(Switch2AliveMac)
-        msg += ';'
 
     if len(Switch2DeadMac) != 0 :
-        msg += u' Switch to Dead Device: '
+        msg += u'Dead Device:\n'
         msg += db.BuildMacListStr(Switch2DeadMac)
-        msg += ';'
 
     if len(msg) != 0 :
+        msg = '\n' + msg
         logging.info(msg)
         SendMsg('Mac Monitor', msg)
 

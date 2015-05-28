@@ -81,7 +81,8 @@ def ReadSerial(prefix, band) :
 
 def main() :
     while True :
-        ReadSerial('/dev/ttyACM', 9600)
+        #ReadSerial('/dev/ttyACM', 9600)
+        ReadSerial('/dev/rfcomm0', 9600)
         time.sleep(1)
 
 if __name__ == "__main__" :

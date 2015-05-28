@@ -55,8 +55,8 @@ class PiMgr(Storage) :
         super(PiMgr, self).__init__()
         self.LedPin = 7
         GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(self.LedPin, GPIO.OUT)
-        self.LedTimeout = 30
+        #GPIO.setup(self.LedPin, GPIO.OUT)
+        self.LedTimeout = 15
         self.LedTurnOnTs = 0
 
     def TurnLedOn(self) :
@@ -73,7 +73,8 @@ def main() :
     LastInsert = 0
     while True :
         try :
-            s = serial.Serial('/dev/ttyACM0', 9600)
+            #s = serial.Serial('/dev/ttyACM0', 9600)
+            s = serial.Serial('/dev/rfcomm0', 9600)
             while True :
                 line = s.readline().strip()
                 print line
