@@ -25,8 +25,15 @@ class ErrMsg :
         msg = web.input().get('msg', u'No Error Message')
         return msg
 
+sdb = web.database(dbn     = 'sqlite',
+                  db      = './a.db')
+
+
 class Index :
     def GET(self) :
+        sql = "SELECT * FROM T"
+        records = list(sdb.query(sql))
+        return str(records)
         return config.render.Index()
     def POST(self) :
         return config.render.Index()

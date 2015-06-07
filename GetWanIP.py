@@ -22,8 +22,8 @@ from utils import *
 TMP_FILE_PATH = '/tmp/GetWanIP.txt'
 init_logging(config.ACE_GLOBAL_LOG_PATH)
   
-class GetWanIP:
-    def GetIP(self):
+class GetIP:
+    def GetWanIP(self):
         try:
             logging.info('Try ip.qq.com')
             WanIP = self.Visit('http://ip.qq.com')
@@ -32,6 +32,16 @@ class GetWanIP:
             WanIP = s
             logging.error(s)
         return WanIP
+
+    def GetLanIP(self) :
+        LanIP = 'No Lan IP'
+        try :
+            LanIPList = os.popen("ifconfig | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}' | sed 's/addr://g'").readlines()
+            LanIP = LanIPList[0]
+        except :
+            pass
+
+        return LanIP
 
     def Visit(self,url):
         opener = urllib2.urlopen(url)
@@ -66,7 +76,8 @@ def ddns(ip):
     return response.status == 200
 
 if __name__ == '__main__':  
-    WanIP = GetWanIP().GetIP()
+    WanIP = GetIP().GetWanIP()
+    LanIP = GetIP().GetLanIP()
 
     if not "".join(WanIP.split(".")).isdigit() :
         logging.error("Invalid IP Address {0}".format(WanIP))
@@ -80,6 +91,7 @@ if __name__ == '__main__':
 
     if OldWanIP != WanIP :
         s = 'WanIP has Changed From ' + OldWanIP + ' To ' + WanIP
+        s = s + ' LanIP ' + LanIP
 
         if ddns(WanIP) :
             fd = open(TMP_FILE_PATH, 'w+')

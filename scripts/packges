@@ -11,4 +11,5 @@ fswebcam
 nmap
 ettercap-text-only
 python-crypto
+python-scapy
 expect
