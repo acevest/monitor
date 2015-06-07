@@ -34,7 +34,7 @@ class GetIP:
         return WanIP
 
     def GetLanIP(self) :
-        LanIP = 'No Lan IP'
+        LanIP = 'UnknownLanIP'
         try :
             LanIPList = os.popen("ifconfig | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}' | sed 's/addr://g'").readlines()
             LanIP = LanIPList[0]
@@ -42,6 +42,15 @@ class GetIP:
             pass
 
         return LanIP
+
+    def GetHostName(self) :
+        HostName = 'UnknownHost'
+        try :
+            HostName = os.popen('hostname').readlines()[0]
+        except :
+            pass
+
+        return HostName
 
     def Visit(self,url):
         opener = urllib2.urlopen(url)
@@ -78,6 +87,7 @@ def ddns(ip):
 if __name__ == '__main__':  
     WanIP = GetIP().GetWanIP()
     LanIP = GetIP().GetLanIP()
+    Host  = GetIP().GetHostName()
 
     if not "".join(WanIP.split(".")).isdigit() :
         logging.error("Invalid IP Address {0}".format(WanIP))
@@ -90,7 +100,8 @@ if __name__ == '__main__':
         OldWanIP = '0.0.0.0'
 
     if OldWanIP != WanIP :
-        s = 'WanIP has Changed From ' + OldWanIP + ' To ' + WanIP
+        s = 'Host ' + Host
+        s = s + ' WanIP has Changed From ' + OldWanIP + ' To ' + WanIP
         s = s + ' LanIP ' + LanIP
 
         if ddns(WanIP) :
